@@ -2,6 +2,15 @@
 CREATE DATABASE IF NOT EXISTS learning_platform;
 USE learning_platform;
 
+-- Classes table (must be before users to satisfy foreign key in users)
+CREATE TABLE classes (
+    id VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    code VARCHAR(5) UNIQUE NOT NULL,
+    lecturer_id VARCHAR(36) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Users table
 CREATE TABLE users (
     id VARCHAR(36) PRIMARY KEY,
@@ -15,15 +24,9 @@ CREATE TABLE users (
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
 );
 
--- Classes table
-CREATE TABLE classes (
-    id VARCHAR(36) PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    code VARCHAR(5) UNIQUE NOT NULL,
-    lecturer_id VARCHAR(36) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (lecturer_id) REFERENCES users(id) ON DELETE CASCADE
-);
+-- Now add the foreign key constraint for classes.lecturer_id referencing users(id)
+ALTER TABLE classes
+ADD CONSTRAINT fk_lecturer FOREIGN KEY (lecturer_id) REFERENCES users(id) ON DELETE CASCADE;
 
 -- Sessions table
 CREATE TABLE sessions (
