@@ -25,8 +25,13 @@ Follow these steps to get the project up and running:
 
    * Open **MySQL Workbench**
    * Run the SQL schema file found in the `scripts` folder to create the required database and tables.
+  
+4. **Set up the .env.local file**
 
-4. **Build the project**
+   * Open `.env.local` file located on the root folder.
+   * Change the database credential based on your MySQL Workbench settings.
+
+5. **Build the project**
 
    Navigate to your project directory and run:
 
@@ -34,7 +39,7 @@ Follow these steps to get the project up and running:
    npm run build
    ```
 
-5. **Start the development server**
+6. **Start the development server**
 
    ```bash
    npm run start
