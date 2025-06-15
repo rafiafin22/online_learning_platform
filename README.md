@@ -39,7 +39,7 @@ Follow these steps to get the project up and running:
 6. **Install MySQL modules**
 
    ```bash
-   npm install npm install lucide-react@latest
+   npm install npm install lucide-react@latest --legacy-peer-deps
    ```
 
 7. **Build the project**
