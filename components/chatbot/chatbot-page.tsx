@@ -47,6 +47,222 @@ export default function ChatbotPage({ userRole }: ChatbotPageProps) {
     setMessages([welcomeMessage])
   }, [userRole])
 
+  const getResponse = (userMessage: string): string => {
+    const message = userMessage.toLowerCase()
+
+    // Common responses for all users
+    if (message.includes("hello") || message.includes("hi") || message.includes("help")) {
+      return `Hi there! I'm your Learning Platform assistant. I can help you with:
+      
+${userRole === "student" ? "• Joining classes\n• Viewing assignments\n• Submitting work\n• Checking attendance\n• Viewing rankings" : ""}
+${userRole === "lecturer" ? "• Creating classes\n• Managing schedules\n• Creating assignments\n• Taking attendance\n• Viewing student rankings" : ""}
+${userRole === "admin" ? "• Managing users\n• Viewing all classes\n• System administration" : ""}
+
+What specific feature would you like to learn about?`
+    }
+
+    // Student-specific responses
+    if (userRole === "student") {
+      if (message.includes("join") && message.includes("class")) {
+        return `To join a class:
+1. Go to your Student Dashboard
+2. If you haven't joined a class yet, you'll see a "Join a Class" form
+3. Enter the 5-digit class code provided by your lecturer
+4. Click "Join Class"
+5. You'll then have access to all class features like assignments, schedule, and attendance.
+
+💡 Tip: Make sure you get the correct class code from your lecturer!`
+      }
+
+      if (message.includes("assignment") || message.includes("submit")) {
+        return `To work with assignments:
+1. Go to "Assignments" from the navigation menu
+2. You'll see all available assignments with due dates
+3. Click "Download Instructions" to get the assignment details
+4. To submit: Click "Submit" button, upload your file (PDF, DOC, DOCX, TXT, ZIP)
+5. Once submitted, you can view your submission and check for grades/feedback
+
+📝 Note: Pay attention to due dates - overdue assignments will be marked in red!`
+      }
+
+      if (message.includes("attendance")) {
+        return `To check your attendance:
+1. Go to "Attendance" from the navigation menu
+2. View your attendance statistics (Present, Late, Absent counts)
+3. See detailed attendance history for each session
+4. Your attendance affects your overall ranking in the class
+
+📊 Your attendance percentage is calculated as: (Present + Late×0.5) / Total Sessions`
+      }
+
+      if (message.includes("ranking") || message.includes("grade")) {
+        return `To view your rankings:
+1. Go to "Rankings" from the navigation menu
+2. See your current class rank and overall score
+3. Rankings are calculated from: 70% assignment scores + 30% attendance
+4. Compare your performance with classmates
+
+🏆 Your position in the class is highlighted in blue for easy identification!`
+      }
+
+      if (message.includes("schedule")) {
+        return `To view your class schedule:
+1. Go to "Schedule" from the navigation menu
+2. See all weekly class sessions with times and days
+3. Sessions are organized by day (Monday to Friday)
+4. Each session shows the title, day, and time period
+
+📅 This helps you plan your week and never miss a class!`
+      }
+    }
+
+    // Lecturer-specific responses
+    if (userRole === "lecturer") {
+      if (message.includes("create") && message.includes("class")) {
+        return `To create a class:
+1. Go to your Lecturer Dashboard
+2. If you don't have a class, you'll see "Create Your Class" form
+3. Enter your class name
+4. Click "Create Class"
+5. You'll get a unique 5-digit class code to share with students
+
+⚠️ Important: You can only have one active class at a time. Share the class code with your students so they can join.`
+      }
+
+      if (message.includes("assignment")) {
+        return `To manage assignments:
+1. Go to "Assignments" from the navigation menu
+2. To create: Fill out the form with title, due date, and upload instructions
+3. View all assignments in the assignment list
+4. Click the eye icon to view submissions and grade them
+5. You can provide scores (0-100) and written feedback for each student
+
+📋 Tip: Upload clear instruction files to help students understand the requirements!`
+      }
+
+      if (message.includes("attendance")) {
+        return `To manage attendance:
+1. Go to "Attendance" from the navigation menu
+2. Create new attendance sessions with title and date
+3. Click on any session to mark individual student attendance
+4. Set each student as Present, Absent, or Late
+5. Attendance data is used in student rankings calculation
+
+✅ Regular attendance tracking helps monitor student engagement!`
+      }
+
+      if (message.includes("schedule")) {
+        return `To manage your schedule:
+1. Go to "Schedule" from the navigation menu
+2. Add new schedule entries with day, time, and session title
+3. Choose from Monday to Friday
+4. Set start and end times for each session
+5. Students can view this schedule to know when classes occur
+
+🕐 Keep your schedule updated so students always know when to attend!`
+      }
+
+      if (message.includes("ranking") || message.includes("grade")) {
+        return `To view student rankings:
+1. Go to "Rankings" from the navigation menu
+2. See all students ranked by overall performance
+3. Rankings show: Overall score, assignment average, attendance percentage
+4. Formula: 70% assignment scores + 30% attendance
+5. Use this to identify students who need additional support
+
+📈 This helps you track class performance and provide targeted help!`
+      }
+
+      if (message.includes("delete") && message.includes("class")) {
+        return `To delete your class:
+1. Go to "Profile" from the navigation menu
+2. In the "Class Management" section, click "Delete Class"
+3. Confirm the deletion in the dialog
+4. This will remove all students from the class and delete all class data
+
+⚠️ Warning: This action cannot be undone! All assignments, attendance, and student data will be permanently lost.`
+      }
+    }
+
+    // Admin-specific responses
+    if (userRole === "admin") {
+      if (message.includes("user") || message.includes("manage")) {
+        return `To manage users:
+1. Go to "Users" from the navigation menu
+2. View all registered users (students, lecturers, admins)
+3. Click the edit icon to modify user information
+4. You can update names, emails, and passwords
+5. See which class each user belongs to
+
+👥 You have full control over user accounts and can help with account issues!`
+      }
+
+      if (message.includes("class")) {
+        return `To manage classes:
+1. Go to "Classes" from the navigation menu
+2. View all created classes with their details
+3. See lecturer names, student counts, and creation dates
+4. Click the eye icon to view detailed class information
+5. See all members of each class (lecturer + students)
+
+🏫 This gives you oversight of all educational activities on the platform!`
+      }
+
+      if (message.includes("dashboard")) {
+        return `Your Admin Dashboard shows:
+1. Total system statistics (users, students, lecturers, classes)
+2. Quick access to user and class management
+3. Overview of platform usage
+4. Navigation to detailed management pages
+
+📊 Use these metrics to monitor platform growth and usage patterns!`
+      }
+    }
+
+    // Profile and general features
+    if (message.includes("profile")) {
+      return `To manage your profile:
+1. Go to "Profile" from the navigation menu
+2. View your personal information
+3. ${userRole === "student" ? "Exit your current class if needed" : ""}
+${userRole === "lecturer" ? "Delete your class if needed (this removes all students and data)" : ""}
+4. Your profile shows your role and current class status
+
+👤 Keep your profile information up to date for the best experience!`
+    }
+
+    if (message.includes("logout") || message.includes("exit")) {
+      return `To logout:
+1. Click the "Logout" button in the top-right corner of any page
+2. You'll be redirected to the login page
+3. Your session will be securely ended
+
+🔒 Always logout when using shared computers for security!`
+    }
+
+    if (message.includes("navigation") || message.includes("menu")) {
+      return `Navigation options:
+• Desktop: Use the top navigation bar
+• Mobile: Click the hamburger menu (☰) for the side navigation
+• All main features are accessible from the navigation menu
+• Your current role determines which menu items you see
+
+📱 The interface adapts to your device for the best experience!`
+    }
+
+    // Default response
+    return `I'm not sure about that specific question. Here are some topics I can help with:
+
+${userRole === "student" ? "• Joining classes\n• Assignments and submissions\n• Attendance tracking\n• Rankings and grades\n• Class schedule" : ""}
+${userRole === "lecturer" ? "• Creating and managing classes\n• Assignment creation and grading\n• Attendance management\n• Schedule management\n• Student rankings" : ""}
+${userRole === "admin" ? "• User management\n• Class oversight\n• System administration" : ""}
+• Profile management
+• Navigation help
+• Logout process
+
+Try asking about any of these topics, or be more specific about what you need help with!`
+  }
+  
   const handleSendMessage = () => {
     if (!inputValue.trim()) return
 
