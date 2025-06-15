@@ -228,6 +228,17 @@ export async function createAssignment(
   }
 }
 
+export async function deleteAssignment(assignmentId: string) {
+  try {
+    await db.assignments.delete(assignmentId)
+    revalidatePath("/lecturer/assignments")
+    return { success: true }
+  } catch (error) {
+    console.error("Delete assignment error:", error)
+    return { success: false, error: "Failed to delete assignment" }
+  }
+}
+
 export async function submitAssignment(assignmentId: string, studentId: string, submissionFile: File) {
   try {
     // Upload submission file to blob storage
