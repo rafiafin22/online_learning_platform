@@ -30,8 +30,19 @@ Follow these steps to get the project up and running:
 
    * Open `.env.local` file located on the root folder.
    * Change the database credential based on your MySQL Workbench settings.
+  
+5. **Install MySQL modules**
 
-5. **Build the project**
+   ```bash
+   npm install mysql --legacy-peer-deps
+   ```
+6. **Install MySQL modules**
+
+   ```bash
+   npm install npm install lucide-react@latest
+   ```
+
+7. **Build the project**
 
    Navigate to your project directory and run:
 
@@ -39,7 +50,7 @@ Follow these steps to get the project up and running:
    npm run build
    ```
 
-6. **Start the development server**
+8. **Start the development server**
 
    ```bash
    npm run start
