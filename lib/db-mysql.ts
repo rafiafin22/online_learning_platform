@@ -333,78 +333,83 @@ export const db = {
   },
 
   submissions: {
-    findById: async (id: string): Promise<Submission | null> => {
-      const [rows] = await pool.execute(
-        "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE id = ?",
-        [id],
-      )
-      const submissions = rows as Submission[]
-      return submissions[0] || null
-    },
-
-    findByAssignmentId: async (assignmentId: string): Promise<Submission[]> => {
-      const [rows] = await pool.execute(
-        "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE assignment_id = ?",
-        [assignmentId],
-      )
-      return rows as Submission[]
-    },
-
-    findByStudentId: async (studentId: string): Promise<Submission[]> => {
-      const [rows] = await pool.execute(
-        "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE student_id = ?",
-        [studentId],
-      )
-      return rows as Submission[]
-    },
-
-    findByAssignmentAndStudent: async (assignmentId: string, studentId: string): Promise<Submission | null> => {
-      const [rows] = await pool.execute(
-        "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE assignment_id = ? AND student_id = ?",
-        [assignmentId, studentId],
-      )
-      const submissions = rows as Submission[]
-      return submissions[0] || null
-    },
-
-    create: async (submissionData: Omit<Submission, "id">): Promise<string> => {
-      const id = randomUUID()
-      await pool.execute(
-        "INSERT INTO submissions (id, assignment_id, student_id, submission_url, submitted_at) VALUES (?, ?, ?, ?, ?)",
-        [
-          id,
-          submissionData.assignmentId,
-          submissionData.studentId,
-          submissionData.submissionUrl,
-          submissionData.submittedAt,
-        ],
-      )
-      return id
-    },
-
-    update: async (id: string, data: Partial<Submission>): Promise<void> => {
-      const fields = []
-      const values = []
-
-      if (data.score !== undefined) {
-        fields.push("score = ?")
-        values.push(data.score)
-      }
-      if (data.feedback !== undefined) {
-        fields.push("feedback = ?")
-        values.push(data.feedback)
-      }
-      if (data.gradedAt !== undefined) {
-        fields.push("graded_at = ?")
-        values.push(data.gradedAt)
-      }
-
-      if (fields.length > 0) {
-        values.push(id)
-        await pool.execute(`UPDATE submissions SET ${fields.join(", ")} WHERE id = ?`, values)
-      }
-    },
+  findById: async (id: string): Promise<Submission | null> => {
+    const [rows] = await pool.execute(
+      "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE id = ?",
+      [id],
+    )
+    const submissions = rows as Submission[]
+    return submissions[0] || null
   },
+
+  findByAssignmentId: async (assignmentId: string): Promise<Submission[]> => {
+    const [rows] = await pool.execute(
+      "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE assignment_id = ?",
+      [assignmentId],
+    )
+    return rows as Submission[]
+  },
+
+  findByStudentId: async (studentId: string): Promise<Submission[]> => {
+    const [rows] = await pool.execute(
+      "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE student_id = ?",
+      [studentId],
+    )
+    return rows as Submission[]
+  },
+
+  findByAssignmentAndStudent: async (assignmentId: string, studentId: string): Promise<Submission | null> => {
+    const [rows] = await pool.execute(
+      "SELECT id, assignment_id as assignmentId, student_id as studentId, submission_url as submissionUrl, score, feedback, submitted_at as submittedAt, graded_at as gradedAt FROM submissions WHERE assignment_id = ? AND student_id = ?",
+      [assignmentId, studentId],
+    )
+    const submissions = rows as Submission[]
+    return submissions[0] || null
+  },
+
+  create: async (submissionData: Omit<Submission, "id">): Promise<string> => {
+    const id = randomUUID()
+    await pool.execute(
+      "INSERT INTO submissions (id, assignment_id, student_id, submission_url, submitted_at) VALUES (?, ?, ?, ?, ?)",
+      [
+        id,
+        submissionData.assignmentId,
+        submissionData.studentId,
+        submissionData.submissionUrl,
+        submissionData.submittedAt,
+      ],
+    )
+    return id
+  },
+
+  update: async (id: string, data: Partial<Submission>): Promise<void> => {
+    const fields = []
+    const values = []
+
+    if (data.score !== undefined) {
+      fields.push("score = ?")
+      values.push(data.score)
+    }
+    if (data.feedback !== undefined) {
+      fields.push("feedback = ?")
+      values.push(data.feedback)
+    }
+    if (data.gradedAt !== undefined) {
+      fields.push("graded_at = ?")
+      values.push(data.gradedAt)
+    }
+
+    if (fields.length > 0) {
+      values.push(id)
+      await pool.execute(`UPDATE submissions SET ${fields.join(", ")} WHERE id = ?`, values)
+    }
+  },
+
+  // ✅ Added delete method here:
+  delete: async (id: string): Promise<void> => {
+    await pool.execute("DELETE FROM submissions WHERE id = ?", [id])
+  },
+},
 
   attendance: {
     findById: async (id: string): Promise<Attendance | null> => {
