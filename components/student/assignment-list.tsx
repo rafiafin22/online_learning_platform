@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { submitAssignment } from "@/lib/actions"
+import { useState, useTransition } from "react"
+import { submitAssignment, deleteSubmission } from "@/lib/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -37,10 +37,15 @@ interface StudentAssignmentListProps {
   studentId: string
 }
 
-export default function StudentAssignmentList({ assignments, submissions, studentId }: StudentAssignmentListProps) {
+export default function StudentAssignmentList({
+  assignments,
+  submissions,
+  studentId,
+}: StudentAssignmentListProps) {
   const [submittingTo, setSubmittingTo] = useState<string | null>(null)
   const [submissionFile, setSubmissionFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
 
   async function handleSubmit(assignmentId: string) {
@@ -83,6 +88,25 @@ export default function StudentAssignmentList({ assignments, submissions, studen
     }
   }
 
+  function handleDelete(submissionId: string) {
+    startTransition(() => {
+      deleteSubmission(submissionId).then((res) => {
+        if (res.success) {
+          toast({
+            title: "Submission deleted",
+            description: "You can now submit again if needed",
+          })
+        } else {
+          toast({
+            title: "Failed to delete submission",
+            description: res.error,
+            variant: "destructive",
+          })
+        }
+      })
+    })
+  }
+
   if (assignments.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-8">
@@ -118,7 +142,7 @@ export default function StudentAssignmentList({ assignments, submissions, studen
                 )}
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col items-end space-y-1">
                 <a
                   href={assignment.instructionsUrl}
                   target="_blank"
@@ -161,14 +185,24 @@ export default function StudentAssignmentList({ assignments, submissions, studen
                 )}
 
                 {submission && (
-                  <a
-                    href={submission.submissionUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
-                  >
-                    View Submission
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={submission.submissionUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline text-sm"
+                    >
+                      View Submission
+                    </a>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(submission.id)}
+                      disabled={isPending}
+                    >
+                      {isPending ? "Deleting..." : "Delete"}
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>
