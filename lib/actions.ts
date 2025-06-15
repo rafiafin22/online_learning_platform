@@ -262,6 +262,17 @@ export async function submitAssignment(assignmentId: string, studentId: string, 
   }
 }
 
+export async function deleteSubmission(submissionId: string) {
+  try {
+    await db.submissions.delete(submissionId)
+    revalidatePath("/student/assignments") // or your actual path
+    return { success: true }
+  } catch (error) {
+    console.error("Delete submission error:", error)
+    return { success: false, error: "Failed to delete submission" }
+  }
+}
+
 export async function gradeSubmission(submissionId: string, score: number, feedback: string) {
   try {
     await db.submissions.update(submissionId, {
