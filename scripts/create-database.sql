@@ -2,7 +2,7 @@
 CREATE DATABASE IF NOT EXISTS learning_platform;
 USE learning_platform;
 
--- Classes table (must be before users to satisfy foreign key in users)
+-- 1. Classes table (no dependencies)
 CREATE TABLE classes (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE classes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Users table
+-- 2. Users table (class_id depends on classes.id)
 CREATE TABLE users (
     id VARCHAR(36) PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -24,11 +24,11 @@ CREATE TABLE users (
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE SET NULL
 );
 
--- Now add the foreign key constraint for classes.lecturer_id referencing users(id)
+-- 3. Add foreign key for classes.lecturer_id -> users.id
 ALTER TABLE classes
 ADD CONSTRAINT fk_lecturer FOREIGN KEY (lecturer_id) REFERENCES users(id) ON DELETE CASCADE;
 
--- Sessions table
+-- 4. Sessions table (depends on users)
 CREATE TABLE sessions (
     id VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE sessions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Schedules table
+-- 5. Schedules table (depends on classes)
 CREATE TABLE schedules (
     id VARCHAR(36) PRIMARY KEY,
     class_id VARCHAR(36) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE schedules (
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
 );
 
--- Assignments table
+-- 6. Assignments table (depends on classes)
 CREATE TABLE assignments (
     id VARCHAR(36) PRIMARY KEY,
     class_id VARCHAR(36) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE assignments (
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
 );
 
--- Submissions table
+-- 7. Submissions table (depends on assignments and users)
 CREATE TABLE submissions (
     id VARCHAR(36) PRIMARY KEY,
     assignment_id VARCHAR(36) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE submissions (
     UNIQUE KEY unique_submission (assignment_id, student_id)
 );
 
--- Attendance table
+-- 8. Attendance table (depends on classes)
 CREATE TABLE attendance (
     id VARCHAR(36) PRIMARY KEY,
     class_id VARCHAR(36) NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE attendance (
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
 );
 
--- Attendance records table
+-- 9. Attendance records table (depends on attendance and users)
 CREATE TABLE attendance_records (
     id VARCHAR(36) PRIMARY KEY,
     attendance_id VARCHAR(36) NOT NULL,
