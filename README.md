@@ -36,7 +36,7 @@ Follow these steps to get the project up and running:
    ```bash
    npm install mysql --legacy-peer-deps
    ```
-6. **Install MySQL modules**
+6. **Install Lucide React**
 
    ```bash
    npm install npm install lucide-react@latest --legacy-peer-deps
